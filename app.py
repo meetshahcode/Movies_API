@@ -1,4 +1,3 @@
-import string
 import requests
 from flask import Flask,jsonify
 from flask_sqlalchemy import SQLAlchemy
@@ -35,20 +34,31 @@ def db_drop():
 
 def getdatafromOMDAPI(title = None,year = None,imdbId = None):
     url = r"https://www.omdbapi.com/?apikey=6e0a855e"
-    if title:
+
+    if title and title != "":
         url = url + f"&t={title}"
     if year:
         url = url + f"&y={year}"
-    if imdbId:
+    if imdbId and imdbId != "":
         url = url + f"&i={imdbId}"
     response = (requests.get(url=url)).json()
     if response["Response"]  == "False" or response["Response"] == False : return False
+    Rating = 0.0
+    Year = 0
+    try:
+        Rating = float(response["imdbRating"] ) 
+    except:
+        Rating =  0.0
+    try:
+        Year = int(response["Year"])
+    except:
+        Year = 0
     movie = Movies(
             movie_imdbID = response["imdbID"],
             movie_genres = response["Genre"],
             movie_title= response["Title"],
-            movie_year = int(response["Year"]),
-            movie_rating = float(response["imdbRating"])
+            movie_year = Year,
+            movie_rating = Rating
     )
     db.session.add(movie)
     db.session.commit()
@@ -60,6 +70,7 @@ API
 def hello():
     return jsonify(message = "Welcome to movie api."),200
 
+
 @app.route("/movie_by_id/<int:movie_id>",methods=["GET"])
 def movie_by_id(movie_id):
     movie = Movies.query.filter_by(movie_id=movie_id).first()
@@ -68,6 +79,7 @@ def movie_by_id(movie_id):
         return jsonify(result)
     else:
         return jsonify(message = "The movie id does not exist."),404
+
 
 @app.route("/movie_by_imdbid/<string:movie_imdbID>",methods=["GET"])
 def movie_by_imdbid(movie_imdbID):
@@ -82,32 +94,45 @@ def movie_by_imdbid(movie_imdbID):
     else:
         return jsonify(message = "The movie id does not exist."),404
 
-@app.route("/movie_by_title/<string:title>",methods=["GET"])
-def movie_by_title(title):
-    movies = Movies.query.filter(Movies.movie_title.contains(title))
-    if movies:
+
+@app.route("/movie_by_title/<string:movie_title>",methods=["GET"])
+def movie_by_title(movie_title):
+    movies = Movies.query.filter(Movies.movie_title.contains(movie_title))
+    if movies.count()>0:
         result = movies_schema.dump(movies)
         return jsonify(result)
-    elif getdatafromOMDAPI(title=title):
-        movies = Movies.query.filter(Movies.movie_title.contains(title))
+    elif getdatafromOMDAPI(movie_title):
+        movies = Movies.query.filter(Movies.movie_title.contains(movie_title))
         result = movies_schema.dump(movies)
         return jsonify(result)
     else:
         return jsonify(message = "The movie with the title does not exist."),404
 
+
 @app.route("/movie_by_year/<int:year>",methods=["GET"])
 def movie_by_year(year):
     movies = Movies.query.filter_by(movie_year=year)
-    if movies:
+    if movies.count()>0:
         result = movies_schema.dump(movies)
         return jsonify(result)
     else:
         return jsonify(message = "The movie with given year does not exist."),404
 
+@app.route("/movie_by_rating/<float:movie_rating>",methods = ["GET"])
+def movie_by_rating(movie_rating):
+    movies = Movies.query.filter(Movies.movie_rating >= movie_rating )
+    if movies.count()>0:
+        result = movies_schema.dump(movies)
+        return jsonify(result)
+    else:
+        return jsonify(message = "The movie with the genres does not exist."),404
+
 @app.route("/movie_by_genres/<string:movie_genres>",methods=["GET"])
 def movie_by_genres(movie_genres):
-    movies = Movies.query.filter(Movies.movie_genres.contains(movie_genres))
-    if movies:
+    movielist = [i.strip() for i in movie_genres.split(",")]
+    genres = ",%".join(sorted(movielist))
+    movies = Movies.query.filter(Movies.movie_genres.contains(genres))
+    if movies.count()>0:
         result = movies_schema.dump(movies)
         return jsonify(result)
     else:
