@@ -46,7 +46,7 @@ def getdatafromOMDAPI(title,year,imdbId):
     try:
         movie = Movies(
             movie_by_imdbid = response["imdbID"],
-            movie_by_genres = response["Genre"].split(","),
+            movie_by_genres = response["Genre"],
             movie_by_title= response["Title"],
             movie_by_year = int(response["Year"].strip()),
             movie_rating = float(response["imdbRating"])
@@ -119,18 +119,21 @@ Defining ORM model
 """
 for movies
 """
+
 class Movies(db.Model):
     __tablename__ = 'movies'
     movie_id = Column(Integer, primary_key = True)
     movie_title  = Column(String,nullable = False)
     movie_year = Column(Integer,nullable = False)
     movie_rating = Column(Float,nullable = False)
-    movie_genres = Column(ARRAY(String),nullable = False)
-    movie_imdbID = Column(string)
+    movie_genres = Column(String,nullable = False)
+    movie_imdbID = Column(String)
+
 
 class movieSchema(ma.Schema):
     class Meta:
         fields = ("movie_id","movie_title","movie_year","movie_rating","movie_genres","movie_imdbID")
+
 
 movie_schema = movieSchema()
 movies_schema = movieSchema(many = True)
