@@ -33,31 +33,33 @@ def db_drop():
 
 
 
-def getdatafromOMDAPI(title,year,imdbId):
+def getdatafromOMDAPI(title = None,year = None,imdbId = None):
     url = r"https://www.omdbapi.com/?apikey=6e0a855e"
     if title:
-        url += f"&t={title}"
+        url = url + f"&t={title}"
     if year:
-        url = f"&y={year}"
+        url = url + f"&y={year}"
     if imdbId:
-        url = f"&i={imdbId}"
+        url = url + f"&i={imdbId}"
     response = (requests.get(url=url)).json()
     if response["Response"]  == "False" or response["Response"] == False : return False
-    try:
-        movie = Movies(
-            movie_by_imdbid = response["imdbID"],
-            movie_by_genres = response["Genre"],
-            movie_by_title= response["Title"],
-            movie_by_year = int(response["Year"].strip()),
+    movie = Movies(
+            movie_imdbID = response["imdbID"],
+            movie_genres = response["Genre"],
+            movie_title= response["Title"],
+            movie_year = int(response["Year"]),
             movie_rating = float(response["imdbRating"])
-        )
-    except: return False
+    )
     db.session.add(movie)
     db.session.commit()
     return True
 """
 API
 """
+@app.route("/")
+def hello():
+    return jsonify(message = "Welcome to movie api."),200
+
 @app.route("/movie_by_id/<int:movie_id>",methods=["GET"])
 def movie_by_id(movie_id):
     movie = Movies.query.filter_by(movie_id=movie_id).first()
@@ -69,12 +71,12 @@ def movie_by_id(movie_id):
 
 @app.route("/movie_by_imdbid/<string:movie_imdbID>",methods=["GET"])
 def movie_by_imdbid(movie_imdbID):
-    movie = Movies.query.filter(Movies.movie_title.contains(movie_imdbID)).first()
+    movie = Movies.query.filter(Movies.movie_imdbID.contains(movie_imdbID)).first()
     if movie:
         result = movie_schema.dump(movie)
         return jsonify(result)
     elif getdatafromOMDAPI(imdbId=movie_imdbID):
-        movie = Movies.query.filter(Movies.movie_title.contains(movie_imdbID)).first()
+        movie = Movies.query.filter(Movies.movie_imdbID.contains(movie_imdbID)).first()
         result = movie_schema.dump(movie)
         return jsonify(result)
     else:
@@ -127,7 +129,7 @@ class Movies(db.Model):
     movie_year = Column(Integer,nullable = False)
     movie_rating = Column(Float,nullable = False)
     movie_genres = Column(String,nullable = False)
-    movie_imdbID = Column(String)
+    movie_imdbID = Column(String,unique = True)
 
 
 class movieSchema(ma.Schema):
