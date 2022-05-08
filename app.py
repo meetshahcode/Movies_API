@@ -44,14 +44,41 @@ Defining ORM model
 """
 API
 """
-@app.route("/movie_details/<int:movie_id>",methods=["GET","POST"])
+@app.route("/movie_by_id/<int:movie_id>",methods=["GET"])
 def movie_details(movie_id):
-    movie = movie.query.filter_by(movie_id=movie_id).first()
+    movie = Movies.query.filter_by(movie_id=movie_id).first()
     if movie:
         result = movie_schema.dump(movie)
         return jsonify(result)
     else:
         return jsonify(message = "The movie id does not exist."),404
+
+@app.route("/movie_by_title/<string:title>",methods=["GET"])
+def movie_details(title):
+    movies = Movies.query.filter(Movies.movie_title.contains(title))
+    if movies:
+        result = movies_schema.dump(movies)
+        return jsonify(result)
+    else:
+        return jsonify(message = "The movie title does not exist."),404
+
+@app.route("/movie_by_year/<int:year>",methods=["GET"])
+def movie_details(year):
+    movies = Movies.query.filter_by(movie_year=year)
+    if movies:
+        result = movies_schema.dump(movies)
+        return jsonify(result)
+    else:
+        return jsonify(message = "The movie with year does not exist."),404
+
+@app.route("/movie_by_year/<string:movie_genres>",methods=["GET"])
+def movie_details(movie_genres):
+    movies = Movies.query.filter(Movies.movie_genres.contains(movie_genres))
+    if movies:
+        result = movies_schema.dump(movies)
+        return jsonify(result)
+    else:
+        return jsonify(message = "The movie with the genres does not exist."),404
 
 """
 for movies
