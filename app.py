@@ -5,7 +5,6 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import Column, Integer, String , Float ,ARRAY
 import os
 from flask_marshmallow import Marshmallow
-from flask_jwt_extended import JWTManager,jwt_manager,jwt_required,create_access_token,create_refresh_token
 
 app = Flask(__name__)
 basedir = os.path.abspath(os.path.dirname(__file__))
@@ -15,7 +14,6 @@ app.config["JWT_SECRET_KEY"] = 'unique_key'
 SQLALCHEMY_TRACK_MODIFICATIONS = False
 db = SQLAlchemy(app)
 ma = Marshmallow(app)
-jwt = JWTManager(app)
 
 """
 use flask db_create command in terminal
@@ -43,7 +41,19 @@ def getdatafromOMDAPI(title,year,imdbId):
         url = f"&y={year}"
     if imdbId:
         url = f"&i={imdbId}"
-    response = requests.get(url=url)
+    response = (requests.get(url=url)).json()
+    if response["Response"]  == "False" or response["Response"] == False : return False
+    try:
+        movie = Movies(
+            movie_by_imdbid = response["imdbID"],
+            movie_by_genres = response["Genre"].split(","),
+            movie_by_title= response["Title"],
+            movie_by_year = int(response["Year"].strip()),
+            movie_rating = float(response["imdbRating"])
+        )
+    except: return False
+    db.session.add(movie)
+    db.session.commit()
     return True
 """
 API
