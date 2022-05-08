@@ -1,0 +1,208 @@
+{
+	"info": {
+		"_postman_id": "2d009f56-0d62-469d-aeaf-8a4f0e7db4d3",
+		"name": "Movie api",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "omdbapi",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://www.omdbapi.com/?apikey=6e0a855e&t=sd",
+					"protocol": "https",
+					"host": [
+						"www",
+						"omdbapi",
+						"com"
+					],
+					"path": [
+						""
+					],
+					"query": [
+						{
+							"key": "apikey",
+							"value": "6e0a855e"
+						},
+						{
+							"key": "y",
+							"value": "2022",
+							"disabled": true
+						},
+						{
+							"key": "i",
+							"value": "",
+							"disabled": true
+						},
+						{
+							"key": "t",
+							"value": "sd"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "welcome msg",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://127.0.0.1:5000/",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "movie_by_id",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://127.0.0.1:5000/movie_by_id",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"movie_by_id"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "movie_by_imdbid",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://127.0.0.1:5000/movie_by_imdbid/1",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"movie_by_imdbid",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "movie_by_title",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://127.0.0.1:5000/movie_by_title/tt1285016",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"movie_by_title",
+						"tt1285016"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "movie_by_year",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://127.0.0.1:5000/movie_by_year/2010",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"movie_by_year",
+						"2010"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "movie_by_genres",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://127.0.0.1:5000/movie_by_genres/Drama, Horror, Thriller",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"movie_by_genres",
+						"Drama, Horror, Thriller"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "movie_by_rating",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://127.0.0.1:5000/movie_by_rating/5.0",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"movie_by_rating",
+						"5.0"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
