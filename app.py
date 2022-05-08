@@ -31,16 +31,13 @@ use flask db_drop command in terminal
 def db_drop():
     db.drop_all()
     print("database Dropped !!")
-@app.cli.command("db_seed")
-def db_seed():
-
-    pass
 
 
 """
 Defining ORM model
 """
-
+def getdatafromOMDAPI():
+    pass
 """
 API
 """
